@@ -1,0 +1,148 @@
+.plan-main {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    width: 100vw;
+    min-height: 120vh;
+    background-color: #f4f4f4;
+}
+
+.plan-container {
+    margin-top: 40px;
+    display: flex; /* Flex container to align items side by side */
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    gap: 2rem;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+}
+
+.plan-form {
+    height: 450px;
+    flex: 1; /* Ensures the form takes up available space */
+    min-width: 300px; /* Ensure form doesn't shrink too small */
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.plan-form h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+textarea {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 0.7rem 1.5rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.plan-area {
+    flex: 1; /* Ensures the plan area takes up available space */
+    min-width: 300px; /* Ensure the plan area doesn't shrink too small */
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.generated-plan {
+    border: 2px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.generated-plan.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4caf50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.generated-text {
+    font-size: 1.2rem;
+    white-space: pre-line;
+}
+
+.reschedule-section {
+    margin-top: 2rem;
+}
+
+.reschedule-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.reschedule-section textarea {
+    height: 150px;
+    margin-bottom: 1rem;
+}
+
+.reschedule-section button {
+    background-color: #ff9800;
+    border: none;
+}
+
+.reschedule-section button:hover {
+    background-color: #e68900;
+}
+
+/* Responsive Design: Stack elements in a column on small screens */
+@media (max-width: 768px) {
+    .plan-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .plan-form,
+    .plan-area {
+        width: 90%; /* Ensure both sections are full width on small screens */
+    }
+}
