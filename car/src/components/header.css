@@ -21,6 +21,7 @@
     padding-left: 20px;
     display: flex;
     flex-direction: row;
+    color: white;
 }
 
 .header-1 img{

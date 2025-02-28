@@ -1,7 +1,9 @@
 import './home.css'
 import t from '../assets/tourist.png'
+import Present from '../components/present'
 
 export default function Home() {
+    
     return (
         <>
             <div className="home-main">
@@ -37,6 +39,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
+            <Present></Present>
             </div>
         </>
     );

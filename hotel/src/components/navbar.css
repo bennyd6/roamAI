@@ -12,34 +12,67 @@
     align-items: center;
     justify-content: space-around;
     z-index: 100;
-}
-
-.nav-main a, .nav-main .active {
+  }
+  
+  .nav-main a, .nav-main .active, .nav-main span {
     padding: 5px;
     text-decoration: none;
     color: #eb8922;
     font-weight: 500;
     position: relative;
     cursor: pointer;
-}
-
-.nav-main .active{
-    background-color: #B1C29E;
-    border-radius:50px;
+  }
+  
+  .nav-main .active {
+    background-color: #eb8922;
+    border-radius: 50px;
     color: white;
-}
-
-.nav-main a::after {
+  }
+  
+  .nav-main a::after {
     content: '';
     position: absolute;
     bottom: -5px;
     left: 0;
     width: 0;
     height: 2px;
-    background-color: #B1C29E;
+    background-color: #eb8922;
     transition: width 0.3s ease;
-}
-
-.nav-main a:hover::after, .nav-main .active::after {
+  }
+  
+  .nav-main a:hover::after, .nav-main .active::after {
     width: 100%;
-}
+  }
+  
+  .user-dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 25px; /* Adjust the distance based on design */
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    z-index: 200;
+  }
+  
+  .dropdown-menu button {
+    background-color: #eb8922;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .dropdown-menu button:hover {
+    background-color: #a0b37e;
+  }
+  

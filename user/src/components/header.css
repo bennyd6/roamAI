@@ -50,8 +50,10 @@
 }
 
 .header-2 a{
-    color: #347DC1;
+    color: white;
     text-decoration: none;
+    font-weight: 700;
+    font-size: large;
 }
 
 

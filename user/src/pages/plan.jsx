@@ -38,7 +38,7 @@ export default function Plan() {
 
             const data = await response.json();
             if (response.ok) {
-                setGeneratedPlan(data.plan); // Set the generated plan
+                setGeneratedPlan(data.plan);
             } else {
                 setGeneratedPlan('Error generating plan: ' + data.error);
             }
@@ -51,11 +51,19 @@ export default function Plan() {
 
     const handleReschedule = async (e) => {
         e.preventDefault();
-        if (!suggestion.trim()) {
-            alert("Please enter a suggestion for rescheduling.");
+    
+        const previousPlan = localStorage.getItem('userPlan');  // ✅ Corrected key
+    
+        if (!previousPlan) {
+            alert("No previous plan found! Generate and save a plan first.");
             return;
         }
-
+    
+        if (!suggestion.trim()) {
+            alert("Please describe your mood for rescheduling.");
+            return;
+        }
+    
         setLoading(true);
         try {
             const response = await fetch('http://localhost:5000/reschedule', {
@@ -64,23 +72,68 @@ export default function Plan() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    plan: generatedPlan,
-                    suggestion,
+                    plan: previousPlan,  // ✅ Fetching the correct saved plan
+                    suggestion,  // ✅ User's mood input
                 }),
             });
-
+    
             const data = await response.json();
             if (response.ok) {
-                setGeneratedPlan(data.updatedPlan); // Set the updated plan
+                setGeneratedPlan(data.updatedPlan);
+                localStorage.setItem('userPlan', data.updatedPlan); // ✅ Save updated plan
+                alert("Plan rescheduled successfully!");
             } else {
-                setGeneratedPlan('Error rescheduling plan: ' + data.error);
+                alert("Error rescheduling plan: " + data.error);
             }
         } catch (error) {
-            setGeneratedPlan('An error occurred while rescheduling the plan.');
+            alert("An error occurred while rescheduling the plan.");
         } finally {
             setLoading(false);
         }
     };
+    
+    // ✅ Also update handleSavePlan to store in `userPlan`
+    const handleSavePlan = async () => {
+        if (!generatedPlan) {
+            alert("No plan to save!");
+            return;
+        }
+    
+        const authToken = localStorage.getItem('authToken');
+    
+        if (!authToken) {
+            alert("User not logged in. Please log in first.");
+            return;
+        }
+    
+        setLoading(true);
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/addplan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token': authToken
+                },
+                body: JSON.stringify({ plan: generatedPlan }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                localStorage.setItem('userPlan', generatedPlan); // ✅ Store in correct key
+                alert("Plan saved successfully!");
+            } else {
+                alert("Error saving plan: " + data.error);
+            }
+        } catch (error) {
+            alert("An error occurred while saving the plan.");
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    
+    
 
     return (
         <div className="plan-main">
@@ -142,6 +195,9 @@ export default function Plan() {
                                 <div className="generated-text">
                                     <h2>Your Generated Trip Plan</h2>
                                     <div dangerouslySetInnerHTML={{ __html: generatedPlan }} />
+                                    <button onClick={handleSavePlan} disabled={!generatedPlan || loading}>
+                                        {loading ? 'Saving...' : 'Save Plan'}
+                                    </button>
                                 </div>
                             )
                         )}
@@ -149,13 +205,13 @@ export default function Plan() {
 
                     {/* Suggestion for Reschedule */}
                     <div className="reschedule-section">
-                        <h2>Suggest Reschedule</h2>
+                        <h2>Mood check for Reschedule</h2>
                         <textarea
                             value={suggestion}
                             onChange={handleSuggestionChange}
-                            placeholder="Enter your suggestion for rescheduling"
+                            placeholder="Describe your mood for rescheduling"
                         />
-                        <button onClick={handleReschedule}>Submit Suggestion</button>
+                        <button onClick={handleReschedule}>Reschedule</button>
                     </div>
                 </div>
             </div>
