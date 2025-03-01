@@ -1,33 +1,35 @@
-const jwt = require('jsonwebtoken');
-const Hotel = require('../models/Hotel');
-
-const JWT_SECRET = 'Bennyi$ag00dguy';
+const jwt = require("jsonwebtoken");
+const Hotel = require("../models/Hotel"); // Ensure correct import
+const JWT_SECRET = "Bennyi$ag00dguy";
 
 const fetchHotel = async (req, res, next) => {
-  // Get token from header
-  const token = req.header('auth-token');
-  
-  if (!token) {
-    return res.status(401).json({ error: 'Access denied, no token provided' });
-  }
+    const token = req.header("auth-token");
 
-  try {
-    // Verify token
-    const data = jwt.verify(token, JWT_SECRET);
-    
-    // Find the hotel in the database
-    const hotel = await Hotel.findById(data.hotel.id).select('-password');
-    if (!hotel) {
-      return res.status(404).json({ error: 'Hotel not found' });
+    if (!token) {
+        return res.status(401).json({ error: "Access denied, token missing" });
     }
 
-    // Attach hotel data to request object
-    req.hotel = hotel;
-    next();
-  } catch (error) {
-    console.error(error.message);
-    res.status(401).json({ error: 'Invalid token' });
-  }
+    try {
+        console.log("🔍 Received Token:", token); // ✅ Log token for debugging
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        console.log("✅ Decoded Token:", decoded); // ✅ Check if token decodes correctly
+
+        if (!decoded.hotel || !decoded.hotel.id) {
+            return res.status(401).json({ error: "Invalid token structure" });
+        }
+
+        req.hotel = await Hotel.findById(decoded.hotel.id).select("-password");
+
+        if (!req.hotel) {
+            return res.status(401).json({ error: "Hotel not found" });
+        }
+
+        next();
+    } catch (error) {
+        console.error("Error verifying token:", error.message);
+        return res.status(401).json({ error: "Invalid or expired token" });
+    }
 };
 
 module.exports = fetchHotel;

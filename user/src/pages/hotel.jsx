@@ -5,11 +5,7 @@ import './hotel.css';
 export default function Hotel() {
     const [hotels, setHotels] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [bookingDetails, setBookingDetails] = useState({
-        startDate: '',
-        endDate: '',
-        numRooms: 1,
-    });
+    const [bookingDetails, setBookingDetails] = useState({}); // ✅ Separate booking details per hotel
 
     useEffect(() => {
         const fetchHotels = async () => {
@@ -34,41 +30,48 @@ export default function Hotel() {
         );
     }, [hotels, searchQuery]);
 
-    // Handle form input changes
-    const handleInputChange = (e) => {
-        setBookingDetails({ ...bookingDetails, [e.target.name]: e.target.value });
+    // ✅ Handle changes in the booking form for a specific hotel
+    const handleInputChange = (hotelId, e) => {
+        setBookingDetails(prevDetails => ({
+            ...prevDetails,
+            [hotelId]: {
+                ...prevDetails[hotelId],
+                [e.target.name]: e.target.value
+            }
+        }));
     };
 
+    // ✅ Handle hotel booking
     const handleBookNow = async (hotelId) => {
         try {
-            const authToken = localStorage.getItem('authToken'); // Get token
-    
+            const authToken = localStorage.getItem('authToken');
+
             if (!authToken) {
                 alert('User not logged in');
                 return;
             }
-    
+
+            const hotelBooking = bookingDetails[hotelId] || {}; // Get specific hotel's booking details
+
             const response = await axios.post(
                 'http://localhost:3000/api/hotels/bookRooms',
                 {
                     hotelId,
-                    numRooms: bookingDetails.numRooms,
-                    startDate: bookingDetails.startDate,
-                    endDate: bookingDetails.endDate,
+                    numRooms: hotelBooking.numRooms || 1, // Default to 1 if undefined
+                    startDate: hotelBooking.startDate || '',
+                    endDate: hotelBooking.endDate || '',
                 },
                 {
-                    headers: { 'auth-token': authToken } // Send token in headers
+                    headers: { 'auth-token': authToken }
                 }
             );
-    
+
             alert(response.data.message || 'Booking successful');
         } catch (error) {
             console.error('Error booking hotel:', error);
             alert(error.response?.data?.error || 'Booking failed');
         }
     };
-    
-    
 
     return (
         <div className="hotel-main">
@@ -101,16 +104,32 @@ export default function Hotel() {
                                 <p><strong>Location:</strong> {hotel.location}</p>
                             </div>
 
-                            {/* Booking Form */}
+                            {/* Booking Form - Uses separate state for each hotel */}
                             <div className="booking-form">
                                 <label>Start Date:</label>
-                                <input type="date" name="startDate" value={bookingDetails.startDate} onChange={handleInputChange} />
+                                <input
+                                    type="date"
+                                    name="startDate"
+                                    value={bookingDetails[hotel._id]?.startDate || ""}
+                                    onChange={(e) => handleInputChange(hotel._id, e)}
+                                />
 
                                 <label>End Date:</label>
-                                <input type="date" name="endDate" value={bookingDetails.endDate} onChange={handleInputChange} />
+                                <input
+                                    type="date"
+                                    name="endDate"
+                                    value={bookingDetails[hotel._id]?.endDate || ""}
+                                    onChange={(e) => handleInputChange(hotel._id, e)}
+                                />
 
                                 <label>Number of Rooms:</label>
-                                <input type="number" name="numRooms" min="1" value={bookingDetails.numRooms} onChange={handleInputChange} />
+                                <input
+                                    type="number"
+                                    name="numRooms"
+                                    min="1"
+                                    value={bookingDetails[hotel._id]?.numRooms || "1"}
+                                    onChange={(e) => handleInputChange(hotel._id, e)}
+                                />
 
                                 <button className="book-now-btn" onClick={() => handleBookNow(hotel._id)}>
                                     Book Now

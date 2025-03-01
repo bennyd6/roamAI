@@ -7,6 +7,7 @@ const Hotel = require('../models/Hotel');
 const multer = require('multer');
 const path = require('path');
 const fetchHotel = require('../middleware/fetchHotel');
+const fetchhotel = require('../middleware/fetchHotel');
 const fetchuser = require('../middleware/fetchuser');
 const User = require('../models/User'); // Import User model
 const mongoose=require('mongoose')
@@ -24,6 +25,58 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+router.get('/gethotelbookings', fetchhotel, async (req, res) => {
+    try {
+        // Step 1: Get Hotel Owner ID from token
+        const ownerId = req.name.id;
+        console.log("Hotel Owner ID:", ownerId); // Debugging
+
+        // Step 2: Find hotels owned by this user
+        const hotels = await Hotel.find({ owner: ownerId }).select('_id name');
+        if (!hotels.length) {
+            return res.status(404).json({ error: "No hotels found for this owner" });
+        }
+
+        const hotelIds = hotels.map(hotel => hotel._id);
+
+        // Step 3: Fetch users who have booked these hotels
+        const users = await User.find({ "bookedHotel.hotel": { $in: hotelIds } })
+            .select("bookedHotel name email");
+
+        if (!users.length) {
+            return res.status(404).json({ error: "No bookings found for this owner" });
+        }
+
+        // Step 4: Extract and format bookings with hotel details
+        let allBookings = [];
+        users.forEach(user => {
+            user.bookedHotel.forEach(booking => {
+                if (hotelIds.includes(booking.hotel.toString())) {
+                    allBookings.push({
+                        _id: booking._id,
+                        hotel: booking.hotel, // Reference to Hotel ID
+                        user: user.name,
+                        userEmail: user.email,
+                        dates: booking.dates,
+                        rooms: booking.rooms,
+                        status: booking.status
+                    });
+                }
+            });
+        });
+
+        console.log("All Bookings with Hotel Details:", JSON.stringify(allBookings, null, 2));
+
+        res.json(allBookings);
+    } catch (error) {
+        console.error("Error fetching hotel bookings:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+
 
 
 
