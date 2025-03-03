@@ -1,7 +1,4 @@
-# Project Name
-
-## Overview
-Provide a brief description of your project, including its purpose and key features.
+# roamAI
 
 ## Installation and Setup
 Follow these steps to set up and run the project.
