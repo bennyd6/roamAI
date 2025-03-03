@@ -4,11 +4,14 @@ import './present.css';
 
 export default function Present() {
   const [plan, setPlan] = useState(null);
-  const [bookings, setBookings] = useState([]);
+  const [carBookings, setCarBookings] = useState([]);
+  const [hotelBookings, setHotelBookings] = useState([]);  // State for hotel bookings
+  const [hotelDetails, setHotelDetails] = useState({});  // To store hotel details
 
   const authToken = localStorage.getItem('authToken');
   const navigate = useNavigate(); // Initialize the navigate function
 
+  // Fetch the user's plan
   useEffect(() => {
     fetch('http://localhost:3000/api/auth/getplan', {
       method: 'POST',
@@ -25,9 +28,8 @@ export default function Present() {
       })
       .catch((error) => console.error('Error fetching plan:', error));
   }, [authToken]);
-  
 
-  // Fetching user's bookings
+  // Fetching user's car bookings
   useEffect(() => {
     fetch('http://localhost:3000/api/auth/bookedcars', {
       method: 'GET',
@@ -38,10 +40,46 @@ export default function Present() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Fetched bookings:", data);
-        setBookings(data.bookedCars);
+        console.log("Fetched car bookings:", data);
+        setCarBookings(data.bookedCars);
       })
-      .catch((error) => console.error('Error fetching bookings:', error));
+      .catch((error) => console.error('Error fetching car bookings:', error));
+  }, [authToken]);
+
+  // Fetching user's hotel bookings
+  useEffect(() => {
+    fetch('http://localhost:3000/api/auth/gethotelbookings', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': authToken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched hotel bookings:", data);
+        setHotelBookings(data.bookedHotels);
+        
+        // Fetch hotel details for each booking
+        data.bookedHotels.forEach((booking) => {
+          fetch(`http://localhost:3000/api/auth/gethoteldetails/${booking.hotel}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'auth-token': authToken,
+            },
+          })
+            .then((response) => response.json())
+            .then((hotelData) => {
+              setHotelDetails((prevDetails) => ({
+                ...prevDetails,
+                [booking._id]: hotelData,
+              }));
+            })
+            .catch((error) => console.error('Error fetching hotel details:', error));
+        });
+      })
+      .catch((error) => console.error('Error fetching hotel bookings:', error));
   }, [authToken]);
 
   // Handle button click for rescheduling
@@ -69,10 +107,11 @@ export default function Present() {
         </button>
       </div>
 
-      {/* Bookings Section - Scrollable */}
+      {/* Car Bookings Section - Scrollable */}
       <div className="bookings-container">
-        {bookings.length > 0 ? (
-          bookings.map((booking, index) => (
+        <h2>Your Car Bookings</h2>
+        {carBookings.length > 0 ? (
+          carBookings.map((booking, index) => (
             <div key={index} className="booking-card">
               {/* Car Image */}
               {booking.carDetails && booking.carDetails.image ? (
@@ -94,7 +133,41 @@ export default function Present() {
             </div>
           ))
         ) : (
-          <p className="no-bookings">No bookings found</p>
+          <p className="no-bookings">No car bookings found</p>
+        )}
+      </div>
+
+      {/* Hotel Bookings Section - Scrollable */}
+      <div className="bookings-container">
+        <h2>Your Hotel Bookings</h2>
+        {hotelBookings.length > 0 ? (
+          hotelBookings.map((booking, index) => {
+            const hotel = hotelDetails[booking._id];  // Get hotel details for each booking
+            return (
+              <div key={index} className="booking-card">
+                {/* Hotel Image */}
+                {hotel && hotel.image ? (
+                  <img
+                    src={`http://localhost:3000/${hotel.image.replace(/\\/g, "/")}`}
+                    alt="Hotel"
+                    className="hotel-image"
+                  />
+                ) : (
+                  <div className="no-image">No Image Available</div>
+                )}
+
+                <div className="booking-info">
+                  <h3>{hotel ? hotel.name : 'Unknown Hotel'}</h3>
+                  <p><strong>Location:</strong> {hotel ? hotel.location : 'Unknown'}</p>
+                  <p><strong>Status:</strong> <span className={`status ${booking.status}`}>{booking.status}</span></p>
+                  <p><strong>Dates:</strong> {booking.dates.join(', ')}</p>
+                  <p><strong>Rooms:</strong> {booking.rooms}</p>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p className="no-bookings">No hotel bookings found</p>
         )}
       </div>
     </div>

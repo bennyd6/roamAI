@@ -103,7 +103,44 @@ router.put('/updatestatus/:bookingId', fetchcarprovider, async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+
+  router.put('/updatehotelbooking/:bookingId', fetchhotel, async (req, res) => {
+    const { bookingId } = req.params;
+    const { status } = req.body;
+
+    // Validate the status
+    if (!status || !['confirmed', 'canceled'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+    }
+
+    // Validate booking ID
+    if (!bookingId || !mongoose.Types.ObjectId.isValid(bookingId)) {
+        return res.status(400).json({ error: "Invalid booking ID" });
+    }
+
+    try {
+        // Update booking status
+        const updatedBooking = await User.findOneAndUpdate(
+            { "bookedHotel._id": bookingId, "bookedHotel.hotel": req.hotel._id },
+            { $set: { "bookedHotel.$.status": status } },
+            { new: true }
+        );
+
+        if (!updatedBooking) {
+            return res.status(404).json({ error: "Booking not found or not associated with this hotel" });
+        }
+
+        res.json({ success: true, message: "Booking status updated", updatedBooking });
+    } catch (error) {
+        console.error("Error updating booking status:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
   
+
 
 
 

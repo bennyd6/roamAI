@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const MONGO_URI="mongodb+srv://cadheshbenny:qwerty123456@cluster0.zcv3w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const MONGO_URI="mongodb+srv://majorprojectvbit:D0lJdNALdbqbAhGE@roamai.ildch.mongodb.net/?retryWrites=true&w=majority&appName=roamai"
 
 
 const connectToMongo = () => {

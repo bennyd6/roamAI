@@ -41,23 +41,24 @@ export default function Home() {
 
   
   // Function to handle Accept/Reject booking
-  const handleStatusChange = async (bookingId, status) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.put(
-        "http://localhost:3000/api/bookings/updatehotelbooking",
-        { bookingId, status },
-        { headers: { "auth-token": token } }
-      );
+  
+const handleStatusChange = async (bookingId, status) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.put(
+      `http://localhost:3000/api/bookings/updatehotelbooking/${bookingId}`,
+      { status },
+      { headers: { "auth-token": token } }
+    );
 
-      if (response.data.success) {
-        // Update the UI by filtering out the updated booking
-        setPendingRequests(pendingRequests.filter((request) => request._id !== bookingId));
-      }
-    } catch (error) {
-      console.error(`Error updating booking status to ${status}:`, error);
+    if (response.data.success) {
+      // Handle successful response (e.g., update UI)
+      setPendingRequests(pendingRequests.filter(request => request._id !== bookingId));
     }
-  };
+  } catch (error) {
+    console.error(`Error updating booking status to ${status}:`, error);
+  }
+};
 
   return (
     <div className="home-main">

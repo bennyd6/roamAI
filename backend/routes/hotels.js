@@ -26,57 +26,38 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.get('/gethotelbookings', fetchhotel, async (req, res) => {
-    try {
-        // Step 1: Get Hotel Owner ID from token
-        const ownerId = req.name.id;
-        console.log("Hotel Owner ID:", ownerId); // Debugging
 
-        // Step 2: Find hotels owned by this user
-        const hotels = await Hotel.find({ owner: ownerId }).select('_id name');
-        if (!hotels.length) {
-            return res.status(404).json({ error: "No hotels found for this owner" });
-        }
 
-        const hotelIds = hotels.map(hotel => hotel._id);
+router.get('/gethotelbookings', fetchHotel, async (req, res) => {
+  try {
+    // Access the hotelId from the fetched hotel in the middleware
+    const hotelId = req.hotel._id;
 
-        // Step 3: Fetch users who have booked these hotels
-        const users = await User.find({ "bookedHotel.hotel": { $in: hotelIds } })
-            .select("bookedHotel name email");
+    // Ensure that the hotelId is an ObjectId when comparing with the User's bookedHotel
+    const objectIdHotel = new mongoose.Types.ObjectId(hotelId); // Use 'new' here
 
-        if (!users.length) {
-            return res.status(404).json({ error: "No bookings found for this owner" });
-        }
+    // Find all users who have booked this hotel
+    const users = await User.find({
+      'bookedHotel.hotel': objectIdHotel  // Find users who have this hotelId in their bookedHotel schema
+    }).populate('bookedHotel.hotel');  // Populate the hotel field for each bookedHotel
 
-        // Step 4: Extract and format bookings with hotel details
-        let allBookings = [];
-        users.forEach(user => {
-            user.bookedHotel.forEach(booking => {
-                if (hotelIds.includes(booking.hotel.toString())) {
-                    allBookings.push({
-                        _id: booking._id,
-                        hotel: booking.hotel, // Reference to Hotel ID
-                        user: user.name,
-                        userEmail: user.email,
-                        dates: booking.dates,
-                        rooms: booking.rooms,
-                        status: booking.status
-                    });
-                }
-            });
-        });
-
-        console.log("All Bookings with Hotel Details:", JSON.stringify(allBookings, null, 2));
-
-        res.json(allBookings);
-    } catch (error) {
-        console.error("Error fetching hotel bookings:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'No users found for the given hotelId' });
     }
+
+    // Extract the bookedHotel details for each user
+    const bookedHotels = users.map(user => {
+      return user.bookedHotel.filter(booked => booked.hotel._id.toString() === objectIdHotel.toString());
+    }).flat();
+
+    // Return the booked hotels for this hotelId
+    res.json({ bookedHotels });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred', error: error.message });
+  }
 });
-
-
-
 
 
 

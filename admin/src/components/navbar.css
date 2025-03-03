@@ -24,7 +24,7 @@
 }
 
 .nav-main .active{
-    background-color: #B1C29E;
+    background-color: #eb8922;
     border-radius:50px;
     color: white;
 }
@@ -36,10 +36,17 @@
     left: 0;
     width: 0;
     height: 2px;
-    background-color: #B1C29E;
+    background-color: #eb8922;
     transition: width 0.3s ease;
 }
 
 .nav-main a:hover::after, .nav-main .active::after {
     width: 100%;
+}
+
+
+.nav-main .active {
+    background-color: #eb8922;
+    border-radius: 50px;
+    color: white;
 }

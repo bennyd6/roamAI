@@ -17,6 +17,7 @@ app.use('/api/carProviders', require('./routes/carProviders')); // Car provider 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/bookings', require('./routes/bookings'));  // Add this line
 app.use('/api/hotels', require('./routes/hotels'));
+app.use('/api/admin',require('./routes/admin'))
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

@@ -5,7 +5,7 @@ const { body, validationResult } = require('express-validator');
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const fetchuser=require('../middleware/fetchuser')
-
+const Hotel=require('../models/Hotel')
 const mongoose = require('mongoose');
 const JWT_SECRET='Bennyi$ag00dguy'
 const router=express.Router();
@@ -211,6 +211,43 @@ router.get('/bookedcars', fetchuser, async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
+
+router.get('/gethotelbookings', fetchuser, async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Fetch user along with bookedHotel
+        const user = await User.findById(userId).lean();
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Directly return the bookedHotel details (You can enhance this part if needed)
+        res.json({ bookedHotels: user.bookedHotel });
+
+    } catch (error) {
+        console.error("Server Error:", error.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
+// Assuming you're using express.js
+router.get('/gethoteldetails/:hotelId', async (req, res) => {
+    try {
+      const hotel = await Hotel.findById(req.params.hotelId);
+      if (!hotel) {
+        return res.status(404).json({ error: 'Hotel not found' });
+      }
+      console.log("Hotel image path:", hotel.image);
+      res.json(hotel);
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+  
 
 
 

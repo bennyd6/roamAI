@@ -1,13 +1,15 @@
-import { Link } from 'react-router-dom'; // Import the Link component from react-router-dom
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation hook
 import './navbar.css';
 
 export default function Navbar() {
+  const location = useLocation(); // Get the current location
+
   return (
     <div className="nav-main">
-      <Link to="/">Home</Link> {/* Use Link instead of a */}
-      <Link to="/plan">Plan with AI</Link>
-      <Link to="/car">Rent a Car</Link>
-      <Link to="/hotel">Book Hotel</Link>
+      <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
+      <Link to="/users" className={location.pathname === '/users' ? 'active' : ''}>Users</Link>
+      <Link to="/car" className={location.pathname === '/car' ? 'active' : ''}>Car providers</Link>
+      <Link to="/hotel" className={location.pathname === '/hotel' ? 'active' : ''}>Hotel Owners</Link>
     </div>
   );
 }

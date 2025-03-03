@@ -11,6 +11,7 @@ export default function Header() {
                 {/* <h1>motherly .</h1> */}
             </div>
             <div className="header-2">
+                Admin Portal
             </div>
         </div>
     );

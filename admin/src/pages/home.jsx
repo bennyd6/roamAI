@@ -1,18 +1,8 @@
 import './home.css'
-import t from '../assets/tourist.png'
 
-export default function Home() {
-    return (
-        <>
-            <div className="home-main">
-                <div className="home-1">
-                    <img src={t} alt="" />
-                    <div className="home-1-in">
-                        <h1>Wanna start a <br /> new trip with AI?</h1>
-                        <a href="/plan">Click here</a>
-                    </div>
-                </div>
-                <div className="home-2">
+export default function Home(){
+    return(
+        <div className="home-2">
                     <h1>Services we provide ⬇️</h1>
                     <div className="home-2-in">
                         <div className="service-card">
@@ -35,9 +25,7 @@ export default function Home() {
                             <p>Book your stay at our partner accommodations for a comfortable trip.</p>
                             <a href="/room-booking">Find Rooms</a>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </>
+            </div>       
+            </div>       
     );
 }
