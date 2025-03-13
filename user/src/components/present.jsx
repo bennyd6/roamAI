@@ -108,34 +108,37 @@ export default function Present() {
       </div>
 
       {/* Car Bookings Section - Scrollable */}
-      <div className="bookings-container">
-        <h2>Your Car Bookings</h2>
-        {carBookings.length > 0 ? (
-          carBookings.map((booking, index) => (
-            <div key={index} className="booking-card">
-              {/* Car Image */}
-              {booking.carDetails && booking.carDetails.image ? (
-                <img
-                  src={`http://localhost:3000${booking.carDetails.image}`}
-                  alt="Car"
-                  className="car-image"
-                />
-              ) : (
-                <div className="no-image">No Image Available</div>
-              )}
-
-              <div className="booking-info">
-                <h3>{booking.carDetails ? booking.carDetails.model : 'Unknown'}</h3>
-                <p><strong>Provider:</strong> {booking.providerDetails ? booking.providerDetails.name : 'Unknown'}</p>
-                <p><strong>Status:</strong> <span className={`status ${booking.status}`}>{booking.status}</span></p>
-                <p><strong>Dates:</strong> {booking.dates.join(', ')}</p>
-              </div>
-            </div>
-          ))
+      {/* // Car Bookings Section - Scrollable */}
+<div className="bookings-container">
+  <h2>Your Car Bookings</h2>
+  {carBookings.length > 0 ? (
+    carBookings.map((booking, index) => (
+      <div key={index} className="booking-card">
+        {/* Car Image */}
+        {booking.carDetails && booking.carDetails.image ? (
+          <img
+            src={`http://localhost:3000${booking.carDetails.image}`}
+            alt="Car"
+            className="car-image"
+          />
         ) : (
-          <p className="no-bookings">No car bookings found</p>
+          <div className="no-image">No Image Available</div>
         )}
+
+        <div className="booking-info">
+          <h3>{booking.carDetails ? booking.carDetails.model : 'Unknown'}</h3>
+          <p><strong>Provider:</strong> {booking.providerDetails ? booking.providerDetails.name : 'Unknown'}</p>
+          <p><strong>Phone:</strong> {booking.providerDetails ? booking.providerDetails.phn : 'N/A'}</p> {/* Display phone number here */}
+          <p><strong>Status:</strong> <span className={`status ${booking.status}`}>{booking.status}</span></p>
+          <p><strong>Dates:</strong> {booking.dates.join(', ')}</p>
+        </div>
       </div>
+    ))
+  ) : (
+    <p className="no-bookings">No car bookings found</p>
+  )}
+</div>
+
 
       {/* Hotel Bookings Section - Scrollable */}
       <div className="bookings-container">
