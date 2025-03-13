@@ -137,84 +137,87 @@ export default function Plan() {
 
     return (
         <div className="plan-main">
-            <div className="plan-container">
-                {/* Form Section */}
-                <div className="plan-form">
-                    <h1>Plan Your Trip</h1>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="source">Source</label>
-                            <input
-                                type="text"
-                                id="source"
-                                name="source"
-                                value={formData.source}
-                                onChange={handleInputChange}
-                                placeholder="Enter Source"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="destination">Destination</label>
-                            <input
-                                type="text"
-                                id="destination"
-                                name="destination"
-                                value={formData.destination}
-                                onChange={handleInputChange}
-                                placeholder="Enter Destination"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="days">Number of Days</label>
-                            <input
-                                type="number"
-                                id="days"
-                                name="days"
-                                value={formData.days}
-                                onChange={handleInputChange}
-                                placeholder="Enter number of days"
-                                required
-                            />
-                        </div>
-                        <button type="submit" disabled={loading}>
-                            {loading ? 'Generating Plan...' : 'Generate Plan'}
-                        </button>
-                    </form>
+    <div className="plan-container">
+        {/* Form Section */}
+        <div className="plan-form">
+            <h1>Plan Your Trip</h1>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="source">Source</label>
+                    <input
+                        type="text"
+                        id="source"
+                        name="source"
+                        value={formData.source}
+                        onChange={handleInputChange}
+                        placeholder="Enter Source"
+                        required
+                    />
                 </div>
-
-                {/* AI Generated Plan & Suggestion Section */}
-                <div className="plan-area">
-                    {/* AI Generated Plan */}
-                    <div className={`generated-plan ${loading ? 'loading' : ''}`}>
-                        {loading ? (
-                            <div className="loader">Loading...</div>
-                        ) : (
-                            generatedPlan && (
-                                <div className="generated-text">
-                                    <h2>Your Generated Trip Plan</h2>
-                                    <div dangerouslySetInnerHTML={{ __html: generatedPlan }} />
-                                    <button onClick={handleSavePlan} disabled={!generatedPlan || loading}>
-                                        {loading ? 'Saving...' : 'Save Plan'}
-                                    </button>
-                                </div>
-                            )
-                        )}
-                    </div>
-
-                    {/* Suggestion for Reschedule */}
-                    <div className="reschedule-section">
-                        <h2>Mood check for Reschedule</h2>
-                        <textarea
-                            value={suggestion}
-                            onChange={handleSuggestionChange}
-                            placeholder="Describe your mood for rescheduling"
-                        />
-                        <button onClick={handleReschedule}>Reschedule</button>
-                    </div>
+                <div className="form-group">
+                    <label htmlFor="destination">Destination</label>
+                    <input
+                        type="text"
+                        id="destination"
+                        name="destination"
+                        value={formData.destination}
+                        onChange={handleInputChange}
+                        placeholder="Enter Destination"
+                        required
+                    />
                 </div>
+                <div className="form-group">
+                    <label htmlFor="days">Number of Days</label>
+                    <input
+                        type="number"
+                        id="days"
+                        name="days"
+                        value={formData.days}
+                        onChange={handleInputChange}
+                        placeholder="Enter number of days"
+                        required
+                    />
+                </div>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Generating Plan...' : 'Generate Plan'}
+                </button>
+            </form>
+        </div>
+
+        {/* AI Generated Plan & Suggestion Section */}
+        <div className="plan-area">
+            {/* AI Generated Plan */}
+            <div className={`generated-plan ${loading ? 'loading' : ''}`}>
+    {loading ? (
+        <div className="loader">Loading...</div>
+    ) : (
+        generatedPlan && (
+            <div className="generated-text">
+                {/* <h2>Your Generated Trip Plan</h2> */}
+                {/* Render the generated plan as HTML with bullet points and headings */}
+                <div dangerouslySetInnerHTML={{ __html: generatedPlan }} />
+                <button onClick={handleSavePlan} disabled={!generatedPlan || loading}>
+                    {loading ? 'Saving...' : 'Save Plan'}
+                </button>
+            </div>
+        )
+    )}
+</div>
+
+
+
+            {/* Suggestion for Reschedule */}
+            <div className="reschedule-section">
+                <h2>Mood check for Reschedule</h2>
+                <textarea
+                    value={suggestion}
+                    onChange={handleSuggestionChange}
+                    placeholder="Describe your mood for rescheduling"
+                />
+                <button onClick={handleReschedule}>Reschedule</button>
             </div>
         </div>
+    </div>
+</div>
     );
 }

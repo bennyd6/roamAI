@@ -15,9 +15,13 @@ def chat_with_gemini(source, destination, days):
              f"Destination: {destination}\n" \
              f"Number of Days: {days}\n" \
              f"The plan should include daily activities, locations, and recommendations.\n" \
-             f"Can also recommend places nearby\n" \
-             f"going in a car\n" \
-             f"Each day should be well-organized, and clearly separated with headings for each day. Include meal suggestions where applicable."
+             f"Please format the plan with the following specifications:\n" \
+             f"1. Each day should be a heading (e.g., 'Day 1: ...').\n" \
+             f"2. Activities for each day should be in bullet points, wrapped in <ul> and <li> tags.\n" \
+             f"3. Include meal suggestions where applicable.\n" \
+             f"4. Recommend places nearby.\n" \
+             f"5. Keep the plan easy to read with clear separations between days.\n" \
+             f"Please ensure that the content is rendered with proper HTML tags like <ul>, <li>, and <h2>."
 
     model = genai.GenerativeModel("gemini-1.5-pro")
     response = model.generate_content(prompt)
@@ -55,10 +59,23 @@ def reschedule_plan():
         return jsonify({"error": "Previous plan and mood description are required!"}), 400
 
     # Modify the plan based on mood
-    prompt = f"Here's the current trip plan:\n{previous_plan}\n\n" \
-             f"The user wants to reschedule based on the following mood description:\n{mood_description}\n\n" \
-             f"Please adjust the trip plan accordingly, ensuring a smooth itinerary while keeping key attractions. " \
-             f"Make changes where necessary, but do not remove essential locations unless required."
+    prompt = f"""
+        Here's the current trip plan:
+        {previous_plan}
+
+        The user wants to reschedule based on the following mood description:
+        {mood_description}
+
+        Please adjust the trip plan accordingly, ensuring a smooth itinerary while maintaining key attractions. Make changes where necessary, but do not remove essential locations unless required.
+
+        Please format the plan with the following specifications:
+        1. Each day should be a heading (e.g., 'Day 1: ...').
+        2. Activities for each day should be listed in bullet points, wrapped in <ul> and <li> tags.
+        3. Include meal suggestions where applicable.
+        4. Recommend places nearby.
+        5. Keep the plan easy to read with clear separations between days.
+        6. Ensure that the content is rendered with proper HTML tags like <ul>, <li>, and <h2>.
+        """
 
     model = genai.GenerativeModel("gemini-1.5-pro")
     response = model.generate_content(prompt)
