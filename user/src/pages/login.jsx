@@ -36,7 +36,8 @@ export default function Login({ setAuthToken }) {
     return (
         <div className="login-main">
             <div className="login-main-one">
-                <img src={logo} alt="Logo" />
+                {/* <img src={logo} alt="Logo" /> */}
+                <h1>Globemate</h1>
             </div>
             <div className="login-main-two">
                 <div className="login-card">
